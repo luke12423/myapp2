@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+
+{% block title %}Статус заказа #{{ order.id }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-search"></i> Отслеживание заказа #{{ order.id }}
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <!-- Статус бар -->
+                    <div class="status-bar mb-5">
+                        <div class="d-flex justify-content-between">
+                            {% set statuses = ['новый', 'в обработке', 'выполнен'] %}
+                            {% set current_index = statuses.index(order.status) if order.status in statuses else 0 %}
+                            
+                            {% for status in statuses %}
+                            <div class="text-center">
+                                <div class="status-circle {% if loop.index0 <= current_index %}active{% endif %}">
+                                    {% if loop.index0 < current_index %}
+                                    <i class="fas fa-check"></i>
+                                    {% else %}
+                                    <span>{{ loop.index }}</span>
+                                    {% endif %}
+                                </div>
+                                <div class="status-label mt-2">{{ status|title }}</div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="status-line"></div>
+                    </div>
+
+                    <!-- Детали заказа -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0">Информация о заказе</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p><strong>Номер заказа:</strong> #{{ order.id }}</p>
+                                    <p><strong>Дата создания:</strong> {{ order.created_at|format_date }} {{ order.created_at.strftime('%H:%M') }}</p>
+                                    <p><strong>Текущий статус:</strong> 
+                                        <span class="badge {% if order.status == 'новый' %}bg-info
+                                                          {% elif order.status == 'в обработке' %}bg-warning
+                                                          {% elif order.status == 'выполнен' %}bg-success
+                                                          {% elif order.status == 'отменен' %}bg-danger
+                                                          {% else %}bg-secondary{% endif %}">
+                                            {{ order.status }}
+                                        </span>
+                                    </p>
+                                    {% if order.user_id and current_user.is_authenticated and current_user.id == order.user_id %}
+                                    <p><strong>Ваш логин:</strong> {{ order.user.username }}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0">Контактная информация</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p><strong>Имя:</strong> {{ order.customer_name }}</p>
+                                    <p><strong>Телефон:</strong> {{ order.customer_phone }}</p>
+                                    {% if order.customer_email %}
+                                    <p><strong>Email:</strong> {{ order.customer_email }}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Товары в заказе -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">Состав заказа</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Товар</th>
+                                            <th>Количество</th>
+                                            <th>Цена</th>
+                                            <th>Сумма</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    {% if order.product.image %}
+                                                    <img src="{{ url_for('static', filename=order.product.image) }}" 
+                                                         alt="{{ order.product.name }}" 
+                                                         style="width: 50px; height: 50px; object-fit: cover; margin-right: 10px;">
+                                                    {% endif %}
+                                                    <div>
+                                                        <strong>{{ order.product.name }}</strong><br>
+                                                        <small class="text-muted">{{ order.product.category }}</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>{{ order.quantity }}</td>
+                                            <td>{{ order.product.price|format_price }}</td>
+                                            <td><strong>{{ (order.product.price * order.quantity)|format_price }}</strong></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if order.notes %}
+                    <div class="card mb-4">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">Дополнительные пожелания</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="mb-0">{{ order.notes|replace('\n', '<br>')|safe }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Действия -->
+                    <div class="text-center">
+                        <div class="btn-group" role="group">
+                            <a href="{{ url_for('index') }}" class="btn btn-outline-primary">
+                                <i class="fas fa-home"></i> На главную
+                            </a>
+                            <a href="{{ url_for('catalog') }}" class="btn btn-outline-success">
+                                <i class="fas fa-shopping-cart"></i> Продолжить покупки
+                            </a>
+                            {% if current_user.is_authenticated %}
+                            <a href="{{ url_for('profile') }}" class="btn btn-outline-info">
+                                <i class="fas fa-user"></i> Мой профиль
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+.status-bar {
+    position: relative;
+    padding: 0 20px;
+}
+
+.status-circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #e9ecef;
+    border: 3px solid #dee2e6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #6c757d;
+    z-index: 2;
+    position: relative;
+}
+
+.status-circle.active {
+    background-color: #007bff;
+    border-color: #0056b3;
+    color: white;
+}
+
+.status-label {
+    font-size: 0.9rem;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.status-line {
+    position: absolute;
+    top: 25px;
+    left: 10%;
+    right: 10%;
+    height: 3px;
+    background-color: #dee2e6;
+    z-index: 1;
+}
+</style>
+{% endblock %}

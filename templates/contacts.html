@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}Контакты - Магазин техники{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <h1 class="mb-4">Контакты</h1>
+
+            <div class="card shadow mb-4">
+                <div class="card-body">
+                    <h3 class="card-title mb-3"><i class="fas fa-phone"></i> Свяжитесь с нами</h3>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100 bg-dark">
+                                <div class="card-body">
+                                    <h4 class="card-title text-primary">
+                                        <i class="fas fa-phone-alt"></i> Телефон
+                                    </h4>
+                                    <p class="card-text fs-5">
+                                        <strong>+7 (900) 331-39-96</strong>
+                                    </p>
+                                    <p class="card-text text-muted">
+                                        Звонки принимаем ежедневно<br>
+                                        с 9:00 до 21:00
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100 bg-dark">
+                                <div class="card-body">
+                                    <h4 class="card-title text-primary">
+                                        <i class="fas fa-envelope"></i> Email
+                                    </h4>
+                                    <p class="card-text fs-5">
+                                        <strong>danilka_26112004@mail.ru</strong>
+                                    </p>
+                                    <p class="card-text text-muted">
+                                        Ответим в течение<br>
+                                        24 часов
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow mb-4">
+                <div class="card-body">
+                    <h3 class="card-title mb-3"><i class="fas fa-clock"></i> Часы работы</h3>
+                    <table class="table table-dark">
+                        <tbody>
+                            <tr>
+                                <td><i class="fas fa-calendar-day"></i> Понедельник - Воскресенье</td>
+                                <td class="text-end">9:00 - 21:00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card shadow">
+                <div class="card-body">
+                    <h3 class="card-title mb-3"><i class="fas fa-map-marker-alt"></i> Наш офис</h3>
+                    <p class="card-text mb-3">
+                        <i class="fas fa-map-marker-alt text-danger"></i>
+                        <strong>Адрес:</strong> г. Чебоксары, Московский проспект, 15
+                    </p>
+
+                    <div class="ratio ratio-16x9 mb-3">
+                        <iframe
+                            src="https://yandex.ru/map-widget/v1/?ll=47.224291%2C56.145715&z=17&pt=47.224291%2C56.145715,pm2rdm&l=map"
+                            width="100%"
+                            height="400"
+                            frameborder="0"
+                            allowfullscreen="true"
+                            style="border:0; border-radius: 8px;">
+                        </iframe>
+                    </div>
+
+                    <div class="alert alert-info mt-3">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Как добраться:</strong> Наш офис расположен на Московском проспекте, 15 в центральной части города.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

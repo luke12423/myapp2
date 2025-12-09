@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block title %}Оформление заказа - {{ product.name }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Оформление заказа</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            {% if product.image %}
+                            <img src="{{ url_for('static', filename=product.image) }}" 
+                                 alt="{{ product.name }}" 
+                                 class="img-fluid rounded">
+                            {% else %}
+                            <div class="bg-light d-flex align-items-center justify-content-center rounded" 
+                                 style="height: 200px;">
+                                <span class="text-muted">Нет изображения</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-8">
+                            <h3>{{ product.name }}</h3>
+                            <p class="text-muted">{{ product.description[:150] }}...</p>
+                            <h4 class="text-primary">{{ product.price|format_price }}</h4>
+                            <p class="text-muted">Категория: {{ product.category }}</p>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <form method="POST" action="{{ url_for('create_order', product_id=product.id) }}">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="customer_name" class="form-label">Имя *</label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="customer_name" 
+                                       name="customer_name" 
+                                       value="{% if current_user.is_authenticated %}{{ current_user.username }}{% endif %}"
+                                       required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="customer_phone" class="form-label">Телефон *</label>
+                                <input type="tel" 
+                                       class="form-control" 
+                                       id="customer_phone" 
+                                       name="customer_phone" 
+                                       placeholder="+7 (999) 123-45-67" 
+                                       required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="customer_email" class="form-label">Email</label>
+                            <input type="email" 
+                                   class="form-control" 
+                                   id="customer_email" 
+                                   name="customer_email" 
+                                   value="{% if current_user.is_authenticated %}{{ current_user.email }}{% endif %}"
+                                   placeholder="email@example.com">
+                            <div class="form-text">На этот email придет подтверждение заказа</div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="quantity" class="form-label">Количество</label>
+                                <input type="number" 
+                                       class="form-control" 
+                                       id="quantity" 
+                                       name="quantity" 
+                                       value="1" 
+                                       min="1" 
+                                       max="100">
+                            </div>
+                            <div class="col-md-8 mb-3">
+                                <label for="notes" class="form-label">Дополнительные пожелания</label>
+                                <textarea class="form-control" 
+                                          id="notes" 
+                                          name="notes" 
+                                          rows="2" 
+                                          placeholder="Укажите удобное время доставки, цвет товара и т.д."></textarea>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <h5 class="alert-heading">Итого к оплате:</h5>
+                            <h3 class="mb-0" id="total-price">{{ product.price|format_price }}</h3>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ url_for('product_detail', product_id=product.id) }}" 
+                               class="btn btn-secondary me-md-2">Назад</a>
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-check-circle"></i> Подтвердить заказ
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Динамический расчет суммы при изменении количества
+    document.getElementById('quantity').addEventListener('input', function() {
+        const quantity = parseInt(this.value) || 1;
+        const price = {{ product.price }};
+        const total = quantity * price;
+        
+        // Форматирование суммы как на сервере
+        document.getElementById('total-price').textContent = 
+            total.toLocaleString('ru-RU', { 
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2 
+            }).replace(',', ' ') + ' ₽';
+    });
+</script>
+{% endblock %}

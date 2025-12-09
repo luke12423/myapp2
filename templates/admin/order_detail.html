@@ -1,0 +1,207 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Админ-панель - Заказ #{{ order.id }}{% endblock %}
+{% block page_title %}Заказ #{{ order.id }}{% endblock %}
+
+{% block admin_content %}
+<div class="row">
+    <div class="col-lg-8">
+        <!-- Информация о заказе -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Редактирование заказа</h6>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Статус заказа</label>
+                            <select class="form-select" name="status">
+                                <option value="новый" {% if order.status == 'новый' %}selected{% endif %}>Новый</option>
+                                <option value="в обработке" {% if order.status == 'в обработке' %}selected{% endif %}>В обработке</option>
+                                <option value="выполнен" {% if order.status == 'выполнен' %}selected{% endif %}>Выполнен</option>
+                                <option value="отменен" {% if order.status == 'отменен' %}selected{% endif %}>Отменен</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Дата создания</label>
+                            <input type="text" class="form-control"
+                                   value="{{ order.created_at|format_date }} {{ order.created_at.strftime('%H:%M:%S') }}"
+                                   readonly>
+                        </div>
+                    </div>
+
+                    <!-- Товар в заказе -->
+                    <div class="border rounded p-3 mb-3 bg-light">
+                        <div class="d-flex align-items-center mb-3">
+                            {% if order.product and order.product.image %}
+                            <img src="{{ url_for('static', filename=order.product.image) }}"
+                                 alt="{{ order.product.name }}"
+                                 style="width: 80px; height: 80px; object-fit: cover; margin-right: 15px;">
+                            {% endif %}
+                            <div>
+                                {% if order.product %}
+                                <h5 class="mb-1">{{ order.product.name }}</h5>
+                                <p class="text-muted mb-1">{{ order.product.category }}</p>
+                                <p class="mb-0">ID товара: {{ order.product.id }}</p>
+                                {% else %}
+                                <h5 class="mb-1 text-danger">Товар удален из базы данных</h5>
+                                <p class="text-muted mb-1">ID товара: {{ order.product_id }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <strong>Цена за единицу:</strong><br>
+                                {% if order.product %}
+                                {{ order.product.price|format_price }}
+                                {% else %}
+                                <span class="text-muted">—</span>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4">
+                                <strong>Количество:</strong><br>
+                                {{ order.quantity }}
+                            </div>
+                            <div class="col-md-4">
+                                <strong>Итого:</strong><br>
+                                <h4 class="text-primary mb-0">{{ order.total_price|format_price }}</h4>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Заметки администратора -->
+                    <div class="mb-3">
+                        <label for="admin_notes" class="form-label">Добавить заметку</label>
+                        <textarea class="form-control" id="admin_notes" name="admin_notes"
+                                  rows="3" placeholder="Добавьте заметку по заказу..."></textarea>
+                        <div class="form-text">Заметка будет добавлена к существующим.</div>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('admin_orders') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left"></i> Назад к списку
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Сохранить изменения
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- История заметок -->
+        {% if order.notes %}
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">История заметок</h6>
+            </div>
+            <div class="card-body">
+                <div class="timeline">
+                    {% for note in order.notes.split('\n') if note %}
+                    <div class="timeline-item mb-3">
+                        <div class="timeline-content p-3 bg-light rounded">
+                            <p class="mb-0">{{ note }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="col-lg-4">
+        <!-- Информация о клиенте -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Информация о клиенте</h6>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <strong>Имя:</strong><br>
+                    {{ order.customer_name }}
+                </div>
+                <div class="mb-3">
+                    <strong>Телефон:</strong><br>
+                    {{ order.customer_phone }}
+                </div>
+                {% if order.customer_email %}
+                <div class="mb-3">
+                    <strong>Email:</strong><br>
+                    <a href="mailto:{{ order.customer_email }}" class="text-decoration-none">
+                        {{ order.customer_email }}
+                    </a>
+                </div>
+                {% endif %}
+                {% if order.user %}
+                <div class="mb-3">
+                    <strong>Зарегистрированный пользователь:</strong><br>
+                    <span class="badge bg-info">{{ order.user.username }}</span><br>
+                    <small class="text-muted">ID: {{ order.user.id }}</small>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Быстрые действия -->
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Быстрые действия</h6>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="tel:{{ order.customer_phone }}" class="btn btn-outline-success">
+                        <i class="fas fa-phone"></i> Позвонить клиенту
+                    </a>
+                    {% if order.customer_email %}
+                    <a href="mailto:{{ order.customer_email }}?subject=Заказ%20№{{ order.id }}"
+                       class="btn btn-outline-primary">
+                        <i class="fas fa-envelope"></i> Написать email
+                    </a>
+                    {% endif %}
+                    <a href="{{ url_for('check_order_status', order_id=order.id) }}"
+                       target="_blank"
+                       class="btn btn-outline-info">
+                        <i class="fas fa-external-link-alt"></i> Публичная страница
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+.timeline {
+    position: relative;
+    padding-left: 20px;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: #dee2e6;
+}
+
+.timeline-item {
+    position: relative;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -23px;
+    top: 15px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #007bff;
+}
+</style>
+{% endblock %}

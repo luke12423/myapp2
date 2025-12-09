@@ -1,0 +1,93 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Создать товар - Админ панель{% endblock %}
+{% block page_title %}Создание товара{% endblock %}
+
+{% block admin_content %}
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Создать товар</h6>
+            </div>
+            <div class="card-body">
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Название товара *</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Описание</label>
+                        <textarea class="form-control" id="description" name="description" rows="6"></textarea>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="price" class="form-label">Цена *</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="price" name="price"
+                                           step="0.01" min="0" required>
+                                    <span class="input-group-text">₽</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="stock_quantity" class="form-label">Количество на складе</label>
+                                <input type="number" class="form-control" id="stock_quantity"
+                                       name="stock_quantity" value="10" min="0">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="category" class="form-label">Категория</label>
+                        <input type="text" class="form-control" id="category" name="category">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="image" class="form-label">Изображение товара</label>
+                        <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                        <div class="form-text">
+                            Рекомендуемый размер: 800x800px. Форматы: JPG, PNG, GIF.
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('admin_products') }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Назад
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Создать товар
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Подсказки</h6>
+            </div>
+            <div class="card-body">
+                <h6 class="font-weight-bold">Рекомендации:</h6>
+                <ul class="mb-3">
+                    <li>Название должно быть понятным и информативным</li>
+                    <li>Подробное описание повышает доверие покупателей</li>
+                    <li>Качественные фотографии увеличивают продажи</li>
+                    <li>Указывайте точное количество на складе</li>
+                </ul>
+
+                <h6 class="font-weight-bold">Статус товара:</h6>
+                <p class="small">
+                    Товар создается в активном состоянии. Вы можете отключить его позже.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

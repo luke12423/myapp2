@@ -1,0 +1,73 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Редактировать новость - Админ панель{% endblock %}
+{% block page_title %}Редактирование новости{% endblock %}
+
+{% block admin_content %}
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Редактировать новость</h6>
+            </div>
+            <div class="card-body">
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Заголовок *</label>
+                        <input type="text" class="form-control" id="title" name="title" 
+                               value="{{ news.title }}" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="content" class="form-label">Содержание *</label>
+                        <textarea class="form-control" id="content" name="content" 
+                                  rows="10" required>{{ news.content }}</textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="image" class="form-label">Изображение</label>
+                        <input type="file" class="form-control" id="image" name="image" 
+                               accept="image/*">
+                        {% if news.image %}
+                        <div class="mt-2">
+                            <p>Текущее изображение:</p>
+                            <img src="{{ url_for('static', filename=news.image) }}" 
+                                 alt="{{ news.title }}" 
+                                 class="img-thumbnail" 
+                                 style="max-height: 200px;">
+                            <div class="form-check mt-2">
+                                <input class="form-check-input" type="checkbox" 
+                                       id="delete_image" name="delete_image" value="1">
+                                <label class="form-check-label" for="delete_image">
+                                    Удалить текущее изображение
+                                </label>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" 
+                                   id="is_published" name="is_published" value="1"
+                                   {% if news.is_published %}checked{% endif %}>
+                            <label class="form-check-label" for="is_published">
+                                Опубликовать
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('admin_news') }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Назад
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Сохранить изменения
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}О нас{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <h1 class="mb-4">О нашей компании</h1>
+
+            <div class="card shadow mb-4">
+                <div class="card-body">
+                    <h3 class="card-title mb-3">Наша история</h3>
+                    <p class="card-text">
+                        Мы — современный интернет-магазин, основанный в 2025 году. Наша цель — предоставлять
+                        качественные товары по доступным ценам с быстрой доставкой.
+                    </p>
+                    <p class="card-text">
+                        Мы гордимся тем, что каждый клиент получает индивидуальный подход и
+                        высокий уровень обслуживания.
+                    </p>
+                </div>
+            </div>
+
+            <div class="card shadow mb-4">
+                <div class="card-body">
+                    <h3 class="card-title mb-3">Наши преимущества</h3>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-check-circle text-success fa-lg me-3"></i>
+                                </div>
+                                <div>
+                                    <h5>Качество товаров</h5>
+                                    <p class="text-muted">Тщательный отбор поставщиков и контроль качества</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-check-circle text-success fa-lg me-3"></i>
+                                </div>
+                                <div>
+                                    <h5>Быстрая доставка</h5>
+                                    <p class="text-muted">Доставка по Чебоксарам в течение 1-2 рабочих дней</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-check-circle text-success fa-lg me-3"></i>
+                                </div>
+                                <div>
+                                    <h5>Поддержка клиентов</h5>
+                                    <p class="text-muted">Круглосуточная поддержка по телефону и онлайн-чату</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-check-circle text-success fa-lg me-3"></i>
+                                </div>
+                                <div>
+                                    <h5>Гарантия возврата</h5>
+                                    <p class="text-muted">14 дней на возврат товара без объяснения причин</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Карта с Московским проспектом 15 -->
+            <div class="card shadow mb-4">
+                <div class="card-body">
+                    <h3 class="card-title mb-3">Наш офис в Чебоксарах</h3>
+                    <p class="card-text mb-3">
+                        <i class="fas fa-map-marker-alt text-danger"></i>
+                        <strong>Адрес:</strong> г. Чебоксары, Московский проспект, 15
+                    </p>
+
+                    <div class="ratio ratio-16x9 mb-3">
+                        <!-- Карта Яндекс с новыми координатами 56.145715, 47.224291 -->
+                        <iframe
+                            src="https://yandex.ru/map-widget/v1/?ll=47.224291%2C56.145715&z=17&pt=47.224291%2C56.145715,pm2rdm&l=map"
+                            width="100%"
+                            height="400"
+                            frameborder="0"
+                            allowfullscreen="true"
+                            style="border:0; border-radius: 8px;">
+                        </iframe>
+                    </div>
+
+                    <div class="alert alert-info mt-3">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Как добраться:</strong> Наш офис расположен на Московском проспекте, 15 в центральной части города.
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow">
+                <div class="card-body">
+                    <h3 class="card-title mb-3">Часы работы</h3>
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <td>Понедельник - Воскресенье</td>
+                                <td>9:00 - 21:00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="d-grid gap-2 d-md-flex mt-4">
+                        <a href="{{ url_for('contacts') }}" class="btn btn-primary me-2">
+                            <i class="fas fa-phone"></i> Контакты
+                        </a>
+                        <a href="{{ url_for('catalog') }}" class="btn btn-outline-primary">
+                            <i class="fas fa-shopping-cart"></i> Перейти в каталог
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

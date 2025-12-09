@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+
+{% block title %}Каталог товаров{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Каталог товаров</h1>
+
+    <div class="row">
+        <!-- Фильтры -->
+        <div class="col-md-3">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Фильтры</h5>
+                </div>
+                <div class="card-body">
+                    <form method="GET" action="{{ url_for('catalog') }}">
+                        <div class="mb-3">
+                            <label class="form-label">Категория</label>
+                            <select class="form-select" name="category">
+                                <option value="">Все категории</option>
+                                {% for category in categories %}
+                                <option value="{{ category }}" {% if current_category == category %}selected{% endif %}>
+                                    {{ category }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Цена, от</label>
+                            <input type="number" class="form-control" name="min_price"
+                                   placeholder="0" value="{{ request.args.get('min_price', '') }}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Цена, до</label>
+                            <input type="number" class="form-control" name="max_price"
+                                   placeholder="100000" value="{{ request.args.get('max_price', '') }}">
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="in_stock"
+                                   name="in_stock" value="1" {% if in_stock %}checked{% endif %}>
+                            <label class="form-check-label" for="in_stock">Только в наличии</label>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Применить фильтры</button>
+                            <a href="{{ url_for('catalog') }}" class="btn btn-outline-secondary">Сбросить</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Статистика -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Статистика</h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-1">Всего товаров: <strong>{{ products.total }}</strong></p>
+                    <p class="mb-0">Страница: <strong>{{ products.page }} из {{ products.pages }}</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Список товаров -->
+        <div class="col-md-9">
+            {% if products.items %}
+            <div class="row">
+                {% for product in products.items %}
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 product-card shadow-sm">
+                        {% if product.image %}
+                        <img src="{{ url_for('static', filename=product.image) }}"
+                             class="card-img-top" alt="{{ product.name }}"
+                             style="height: 200px; object-fit: cover;">
+                        {% else %}
+                        <div class="bg-light d-flex align-items-center justify-content-center"
+                             style="height: 200px;">
+                            <i class="fas fa-box-open fa-3x text-muted"></i>
+                        </div>
+                        {% endif %}
+
+                        <div class="card-body d-flex flex-column">
+                            <div class="mb-2">
+                                <span class="badge bg-secondary">{{ product.category }}</span>
+                                {% if product.in_stock %}
+                                <span class="badge bg-success">В наличии ({{ product.stock_quantity }})</span>
+                                {% else %}
+                                <span class="badge bg-danger">Нет в наличии</span>
+                                {% endif %}
+                            </div>
+
+                            <h5 class="card-title">{{ product.name }}</h5>
+                            <p class="card-text text-muted">
+                                {{ product.description[:100] }}{% if product.description|length > 100 %}...{% endif %}
+                            </p>
+
+                            <div class="mt-auto">
+                                <h4 class="text-primary mb-3">{{ product.price|format_price }}</h4>
+
+                                <div class="d-grid gap-2">
+                                    <a href="{{ url_for('product_detail', product_id=product.id) }}"
+                                       class="btn btn-outline-primary">
+                                        <i class="fas fa-eye"></i> Подробнее
+                                    </a>
+
+                                    {% if product.in_stock %}
+                                    <a href="{{ url_for('create_order', product_id=product.id) }}"
+                                       class="btn btn-success">
+                                        <i class="fas fa-shopping-cart"></i> Купить
+                                    </a>
+                                    {% else %}
+                                    <button class="btn btn-secondary" disabled>
+                                        <i class="fas fa-times-circle"></i> Нет в наличии
+                                    </button>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Пагинация -->
+            {% if products.pages > 1 %}
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    {% if products.has_prev %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('catalog', page=products.prev_num,
+                                                              category=current_category,
+                                                              min_price=request.args.get('min_price'),
+                                                              max_price=request.args.get('max_price'),
+                                                              in_stock=in_stock) }}">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    {% for page_num in products.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                        {% if page_num %}
+                            {% if page_num == products.page %}
+                            <li class="page-item active"><span class="page-link">{{ page_num }}</span></li>
+                            {% else %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('catalog', page=page_num,
+                                                                      category=current_category,
+                                                                      min_price=request.args.get('min_price'),
+                                                                      max_price=request.args.get('max_price'),
+                                                                      in_stock=in_stock) }}">
+                                    {{ page_num }}
+                                </a>
+                            </li>
+                            {% endif %}
+                        {% else %}
+                            <li class="page-item disabled"><span class="page-link">...</span></li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if products.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('catalog', page=products.next_num,
+                                                              category=current_category,
+                                                              min_price=request.args.get('min_price'),
+                                                              max_price=request.args.get('max_price'),
+                                                              in_stock=in_stock) }}">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+
+            {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-search fa-4x text-muted mb-4"></i>
+                <h3 class="text-muted">Товаров не найдено</h3>
+                <p class="text-muted mb-4">Попробуйте изменить параметры фильтрации</p>
+                <a href="{{ url_for('catalog') }}" class="btn btn-primary">
+                    <i class="fas fa-times"></i> Сбросить фильтры
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+.product-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+}
+
+.card-img-top {
+    border-bottom: 1px solid #eee;
+}
+</style>
+{% endblock %}

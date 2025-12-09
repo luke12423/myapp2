@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }} - Детали товара{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="product-image mb-4">
+                {% if product.image %}
+                <img src="{{ url_for('static', filename=product.image) }}"
+                     alt="{{ product.name }}"
+                     class="img-fluid rounded shadow">
+                {% else %}
+                <div class="bg-light d-flex align-items-center justify-content-center rounded"
+                     style="height: 400px;">
+                    <span class="text-muted">Нет изображения</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Главная</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('catalog') }}">Каталог</a></li>
+                    <li class="breadcrumb-item active">{{ product.category }}</li>
+                </ol>
+            </nav>
+
+            <h1 class="mb-3">{{ product.name }}</h1>
+
+            <div class="mb-3">
+                <span class="badge bg-primary fs-6">{{ product.category }}</span>
+                {% if product.in_stock %}
+                <span class="badge bg-success">В наличии ({{ product.stock_quantity }} шт.)</span>
+                {% else %}
+                <span class="badge bg-danger">Нет в наличии</span>
+                {% endif %}
+            </div>
+
+            <h2 class="text-primary mb-4">{{ product.price|format_price }}</h2>
+
+            <div class="description mb-4">
+                <h5>Описание</h5>
+                <p class="text-muted">{{ product.description }}</p>
+            </div>
+
+            <div class="product-info mb-4">
+                <table class="table table-bordered">
+                    <tbody>
+                        <tr>
+                            <th scope="row">Категория</th>
+                            <td>{{ product.category }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Наличие</th>
+                            <td>
+                                {% if product.in_stock %}
+                                <span class="text-success">В наличии ({{ product.stock_quantity }} шт.)</span>
+                                {% else %}
+                                <span class="text-danger">Нет в наличии</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Цена</th>
+                            <td class="text-primary fw-bold">{{ product.price|format_price }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Дата добавления</th>
+                            <td>{{ product.created_at|format_date }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Статус</th>
+                            <td>{% if product.is_active %}Активен{% else %}Неактивен{% endif %}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="d-grid gap-2 d-md-flex">
+                {% if product.in_stock %}
+                <a href="{{ url_for('create_order', product_id=product.id) }}"
+                   class="btn btn-success btn-lg me-2">
+                    <i class="fas fa-shopping-cart"></i> Купить сейчас
+                </a>
+                {% else %}
+                <button class="btn btn-secondary btn-lg me-2" disabled>
+                    <i class="fas fa-times-circle"></i> Нет в наличии
+                </button>
+                {% endif %}
+
+                <a href="{{ url_for('catalog') }}" class="btn btn-outline-primary btn-lg">
+                    <i class="fas fa-arrow-left"></i> Назад в каталог
+                </a>
+            </div>
+
+            {% if not product.in_stock %}
+            <div class="alert alert-warning mt-3">
+                <i class="fas fa-exclamation-triangle"></i>
+                Этот товар временно отсутствует в наличии. Вы можете оформить предзаказ или связаться с нами для уточнения сроков поставки.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

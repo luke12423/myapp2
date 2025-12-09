@@ -1,0 +1,78 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Создать новость - Админ панель{% endblock %}
+{% block page_title %}Создание новости{% endblock %}
+
+{% block admin_content %}
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Создать новость</h6>
+            </div>
+            <div class="card-body">
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Заголовок *</label>
+                        <input type="text" class="form-control" id="title" name="title" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="content" class="form-label">Содержание *</label>
+                        <textarea class="form-control" id="content" name="content" rows="10" required></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="image" class="form-label">Изображение</label>
+                        <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                        <div class="form-text">
+                            Рекомендуемый размер: 1200x600px. Форматы: JPG, PNG, GIF.
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="is_published" name="is_published" value="1" checked>
+                            <label class="form-check-label" for="is_published">
+                                Опубликовать сразу
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('admin_news') }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Назад
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Создать новость
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Подсказки</h6>
+            </div>
+            <div class="card-body">
+                <h6 class="font-weight-bold">Рекомендации:</h6>
+                <ul class="mb-3">
+                    <li>Заголовок должен быть кратким и информативным</li>
+                    <li>Используйте абзацы для структурирования текста</li>
+                    <li>Изображение привлекает внимание читателей</li>
+                    <li>Проверьте текст на ошибки перед публикацией</li>
+                </ul>
+
+                <h6 class="font-weight-bold">Статус новости:</h6>
+                <p class="small">
+                    Если снять галочку "Опубликовать", новость сохранится как черновик.
+                    Вы сможете опубликовать её позже.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
